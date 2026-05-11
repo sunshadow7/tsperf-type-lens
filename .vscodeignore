@@ -1,0 +1,8 @@
+.vscode/**
+.npm-cache/**
+.npm-install-cache/**
+.npm-exec-cache/**
+test/**
+test-fixtures/**
+*.vsix
+*.log

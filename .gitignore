@@ -1,0 +1,5 @@
+.npm-cache/
+.npm-install-cache/
+.npm-exec-cache/
+*.vsix
+*.log

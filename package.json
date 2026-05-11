@@ -1,0 +1,137 @@
+{
+  "name": "tsperf-type-lens",
+  "displayName": "TSPerf Type Lens",
+  "description": "VS Code extension that measures TypeScript hover/type-resolution latency and estimates displayed type complexity.",
+  "version": "0.1.0",
+  "publisher": "fellsway-group",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fellsway-group/tsperf-type-lens"
+  },
+  "scripts": {
+    "check": "node --check extension.js && node --check tsserver-plugin/index.js && node test/self-test.js && node test/tsserver-plugin-test.js && node test/package-surface-test.js"
+  },
+  "dependencies": {
+    "tsperf-type-lens-tsserver-plugin": "file:./tsserver-plugin"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters"
+  ],
+  "activationEvents": [
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact",
+    "onLanguage:javascript",
+    "onLanguage:javascriptreact",
+    "onCommand:tsperfTypeLens.measureCursorType",
+    "onCommand:tsperfTypeLens.measureVisibleEditors",
+    "onCommand:tsperfTypeLens.exportMeasurements",
+    "onCommand:tsperfTypeLens.clearMeasurements"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "tsperfTypeLens.measureCursorType",
+        "title": "Measure Type At Cursor",
+        "category": "TSPerf Type Lens",
+        "icon": "$(watch)"
+      },
+      {
+        "command": "tsperfTypeLens.measureVisibleEditors",
+        "title": "Measure Visible TypeScript Symbols",
+        "category": "TSPerf Type Lens",
+        "icon": "$(dashboard)"
+      },
+      {
+        "command": "tsperfTypeLens.exportMeasurements",
+        "title": "Export Measurements",
+        "category": "TSPerf Type Lens",
+        "icon": "$(export)"
+      },
+      {
+        "command": "tsperfTypeLens.clearMeasurements",
+        "title": "Clear Measurements",
+        "category": "TSPerf Type Lens",
+        "icon": "$(clear-all)"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "tsperfTypeLens.measureCursorType",
+          "when": "editorLangId == typescript || editorLangId == typescriptreact || editorLangId == javascript || editorLangId == javascriptreact",
+          "group": "navigation@9"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "tsperfTypeLens.measureVisibleEditors",
+          "when": "editorLangId == typescript || editorLangId == typescriptreact || editorLangId == javascript || editorLangId == javascriptreact",
+          "group": "navigation@9"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "TSPerf Type Lens",
+      "properties": {
+        "tsperfTypeLens.maxSymbolsPerDocument": {
+          "type": "number",
+          "default": 40,
+          "minimum": 1,
+          "maximum": 200,
+          "description": "Maximum number of declaration symbols to measure when running a visible-editor scan."
+        },
+        "tsperfTypeLens.showCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show code lenses above TypeScript declarations for measuring type load latency."
+        },
+        "tsperfTypeLens.showHeatmap": {
+          "type": "boolean",
+          "default": true,
+          "description": "Highlight measured symbols with medium/slow heatmap decorations."
+        },
+        "tsperfTypeLens.enableTsserverPlugin": {
+          "type": "boolean",
+          "default": true,
+          "description": "Configure the bundled TypeScript server plugin to log lower-level language-service timing where VS Code loads it."
+        },
+        "tsperfTypeLens.slowTypeThresholdMs": {
+          "type": "number",
+          "default": 250,
+          "minimum": 1,
+          "description": "Elapsed hover/type-resolution time considered slow."
+        },
+        "tsperfTypeLens.tsserverLogLevel": {
+          "type": "string",
+          "default": "slowOnly",
+          "enum": [
+            "off",
+            "slowOnly",
+            "verbose"
+          ],
+          "description": "Controls how much timing data the TypeScript server plugin writes to the TypeScript server log."
+        }
+      }
+    },
+    "typescriptServerPlugins": [
+      {
+        "name": "tsperf-type-lens-tsserver-plugin",
+        "enableForWorkspaceTypeScriptVersions": true
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "tsperfTypeLens.measurements",
+          "name": "TSPerf Measurements"
+        }
+      ]
+    }
+  }
+}
